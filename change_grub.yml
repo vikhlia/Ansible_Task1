@@ -1,0 +1,18 @@
+---
+- name: httpd out there
+  hosts: [nodes]
+  user: ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+  tasks:
+    - name: make change
+      lineinfile: 
+        path: /etc/default/grub
+        regex: '^GRUB_CMDLINE_LINUX'
+        insertafter: '^GRUB_CMDLINE_LINUX'
+        line: "GRUB_CMDLINE_LINUX=\"no_timer_check console=tty0 console=ttyS0,115200n8 elevator=noop net.ifnames=0 biosdevname=0\""
+    - name: grub2-mkconfig
+      command: grub2-mkconfig      
+            
+...

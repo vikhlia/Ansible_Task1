@@ -1,0 +1,21 @@
+---
+- name: httpd out there
+  hosts: [nodes]
+  user: ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+  tasks:
+    - name: stop httpd
+      systemd: name=httpd state=stopped
+    - name: delete httpd
+      yum: pkg=httpd state=removed  
+    - name: delete a file with text
+      file: path=/var/www/html/index.html state=absent
+    - name: close port
+      firewalld:
+        port: 80/tcp
+        permanent: yes
+        state: disabled      
+            
+...

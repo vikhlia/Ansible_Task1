@@ -1,0 +1,31 @@
+---
+- name: httpd is there
+  hosts: [nodes]
+  user: ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+  tasks:
+    - name: install httpd
+      yum: pkg=httpd state=installed
+    - name: start httpd
+      systemd: name=httpd state=started
+    - name: httpd status
+      command:  systemctl status "{{ item }}"
+      with_items:
+      - httpd
+      register: result
+    - name: show report
+      debug: 
+        var: result
+    - name: create a file with text
+      copy: 
+        content: "Welcome to my web server"
+        dest: /var/www/html/index.html
+    - name: open port
+      firewalld:
+        port: 80/tcp
+        permanent: yes
+        state: enabled      
+            
+...
